@@ -65,7 +65,7 @@ export function AppSidebar() {
     const footerNavItems: NavItem[] = [
         {
             title: 'Repository',
-            url: 'https://github.com/zynxosoCLSU/CLSU_AIRA-LOGIX',
+            url: 'https://github.com/zynxoso/CLSU_AIRA-LOGIX',
             icon: Folder,
         },
     ];
