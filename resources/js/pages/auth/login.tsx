@@ -159,14 +159,14 @@ export default function Login({ canResetPassword }: LoginProps) {
                                 </span>
                             </label>
 
-                            {canResetPassword && (
+                            {/* {canResetPassword && (
                                 <Link
                                     href={route('password.request')}
                                     className="text-[11px] font-bold text-zinc-500 hover:text-white transition-colors uppercase tracking-[0.1em]"
                                 >
                                     Forgot Password?
                                 </Link>
-                            )}
+                            )} */}
                         </div>
 
                         <Button
@@ -194,9 +194,9 @@ export default function Login({ canResetPassword }: LoginProps) {
                     <div className="text-center space-y-4">
                         <p className="text-[11px] text-zinc-500 leading-relaxed font-medium uppercase tracking-wider">
                             By accessing this system, you agree to our <br />
-                            <a href="#" className="text-white/60 underline underline-offset-4 hover:text-white transition-colors">Terms of Service</a>
+                            <Link href={route('terms')} className="text-white/60 underline underline-offset-4 hover:text-white transition-colors">Terms of Service</Link>
                             {" "}and{" "}
-                            <a href="#" className="text-white/60 underline underline-offset-4 hover:text-white transition-colors">Privacy Policy</a>
+                            <Link href={route('privacy')} className="text-white/60 underline underline-offset-4 hover:text-white transition-colors">Privacy Policy</Link>
                         </p>
                     </div>
                 </div>

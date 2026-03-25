@@ -15,6 +15,14 @@ Route::get('/', function () {
     return redirect()->route('login');
 })->name('home');
 
+Route::get('/terms', function () {
+    return Inertia::render('legal/terms');
+})->name('terms');
+
+Route::get('/privacy', function () {
+    return Inertia::render('legal/privacy');
+})->name('privacy');
+
 Route::middleware(['auth'])->group(function () {
     Route::middleware('can:access-dashboard')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
