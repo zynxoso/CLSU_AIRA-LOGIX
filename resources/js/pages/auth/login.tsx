@@ -45,10 +45,12 @@ export default function Login({ canResetPassword }: LoginProps) {
 
                 {/* Logo Section */}
                 <div className="relative z-10 flex items-center gap-3 group cursor-default">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-[#16a34a]/10 border border-[#16a34a]/20 group-hover:border-[#16a34a]/40 transition-all duration-500 shadow-[0_0_20px_rgba(22,163,74,0.1)]">
-                        <div className="w-6 h-6 rounded-full bg-[#16a34a] flex items-center justify-center">
-                            <span className="text-[10px] font-bold text-white">ICT</span>
-                        </div>
+                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 group-hover:border-[#16a34a]/40 transition-all duration-500 shadow-[0_0_20px_rgba(22,163,74,0.1)] overflow-hidden">
+                        <img
+                            src="/clsu-logo-green.png"
+                            alt="CLSU Logo"
+                            className="w-7 h-7 object-contain opacity-90 group-hover:opacity-100 transition-opacity duration-300"
+                        />
                     </div>
                     <div className="flex flex-col">
                         <span className="text-sm font-black text-white tracking-tighter uppercase leading-tight">
@@ -79,13 +81,15 @@ export default function Login({ canResetPassword }: LoginProps) {
 
             {/* Right Side: Login Form */}
             <div className="flex flex-col justify-center items-center p-8 bg-black relative min-h-screen lg:min-h-0">
-                
+
                 {/* Mobile Logo */}
                 <div className="lg:hidden mb-12 flex flex-col items-center">
-                    <div className="flex items-center justify-center w-20 h-20 rounded-3xl bg-white/5 border border-white/10 shadow-2xl mb-4 backdrop-blur-xl">
-                         <div className="w-12 h-12 rounded-full bg-[#16a34a] flex items-center justify-center shadow-[0_0_20px_rgba(22,163,74,0.4)]">
-                            <span className="text-sm font-bold text-white">ICT</span>
-                        </div>
+                    <div className="flex items-center justify-center w-20 h-20 rounded-3xl bg-white/5 border border-white/10 shadow-2xl mb-6 backdrop-blur-xl overflow-hidden">
+                        <img
+                            src="/clsu-logo-green.png"
+                            alt="CLSU Logo"
+                            className="w-14 h-14 object-contain"
+                        />
                     </div>
                     <h1 className="text-2xl font-black text-white tracking-tighter uppercase">CLSU <span className="text-[#16a34a]">ICT</span></h1>
                 </div>
@@ -154,7 +158,7 @@ export default function Login({ canResetPassword }: LoginProps) {
                                     Remember me
                                 </span>
                             </label>
-                            
+
                             {canResetPassword && (
                                 <Link
                                     href={route('password.request')}
@@ -189,7 +193,7 @@ export default function Login({ canResetPassword }: LoginProps) {
 
                     <div className="text-center space-y-4">
                         <p className="text-[11px] text-zinc-500 leading-relaxed font-medium uppercase tracking-wider">
-                            By accessing this system, you agree to our <br/>
+                            By accessing this system, you agree to our <br />
                             <a href="#" className="text-white/60 underline underline-offset-4 hover:text-white transition-colors">Terms of Service</a>
                             {" "}and{" "}
                             <a href="#" className="text-white/60 underline underline-offset-4 hover:text-white transition-colors">Privacy Policy</a>
