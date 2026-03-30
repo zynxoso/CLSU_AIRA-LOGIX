@@ -17,6 +17,8 @@ class DashboardController extends Controller
                 ->selectRaw("SUM(CASE WHEN status = 'Open' THEN 1 ELSE 0 END) as open")
                 ->selectRaw("SUM(CASE WHEN status = 'In Progress' THEN 1 ELSE 0 END) as in_progress")
                 ->selectRaw("SUM(CASE WHEN status = 'Resolved' THEN 1 ELSE 0 END) as resolved")
+                ->selectRaw("SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) as pending")
+                ->selectRaw("SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) as completed")
                 ->first();
 
             return [
@@ -24,6 +26,8 @@ class DashboardController extends Controller
                 'open' => (int) ($row?->open ?? 0),
                 'in_progress' => (int) ($row?->in_progress ?? 0),
                 'resolved' => (int) ($row?->resolved ?? 0),
+                'pending' => (int) ($row?->pending ?? 0),
+                'completed' => (int) ($row?->completed ?? 0),
             ];
         });
 
@@ -71,6 +75,23 @@ class DashboardController extends Controller
             'metrics' => $metrics,
             'requests' => $requests,
             'requesters' => $requesters,
+            'availableStatuses' => [
+                'Pending', 
+                'In Progress', 
+                'Resolved', 
+                'Completed', 
+                'Cancelled', 
+                'Open'
+            ],
+            'availableTypes' => [
+                'Technical Support',
+                'Network/Internet',
+                'Hardware Repair',
+                'Software Install',
+                'User Account Management',
+                'System Development',
+                'Others'
+            ],
             'filters' => $request->only(['search', 'status', 'type', 'requester', 'archived']),
         ]);
     }

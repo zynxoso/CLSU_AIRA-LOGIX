@@ -59,20 +59,23 @@ class IctServiceRequestController extends Controller
         try {
             $file = $request->file('file');
             $originalName = $file->getClientOriginalName();
-            
+
             // Store temporarily for the background job
             $path = $file->store('ict_forms_tmp');
             $fullPath = \Illuminate\Support\Facades\Storage::path($path);
-            
+
             \Illuminate\Support\Facades\Log::info("Smart Scan Import Initiated - Extracting from " . strtoupper($file->getClientOriginalExtension()) . " file: [{$originalName}]");
 
-            $jobId = uniqid('ext_', true);
+            // Use cryptographically secure random string for jobId
+            $jobId = 'ext_' . \Illuminate\Support\Str::random(32);
             \App\Jobs\PerformExtractionJob::dispatch($fullPath, $jobId);
 
+            $userId = auth()->id();
             \Illuminate\Support\Facades\Cache::put("extraction_{$jobId}_status", 'queued', 600);
             \Illuminate\Support\Facades\Cache::put("extraction_{$jobId}_meta", [
                 'original_filename' => $originalName,
-                'path' => $path
+                'path' => $path,
+                'user_id' => $userId,
             ], 600);
 
             return response()->json([
@@ -87,17 +90,25 @@ class IctServiceRequestController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to initiate extraction: ' . $e->getMessage()
+                'message' => 'Failed to initiate extraction. Please contact support.'
             ], 500);
         }
     }
 
     public function checkStatus($jobId)
     {
+        $meta = \Illuminate\Support\Facades\Cache::get("extraction_{$jobId}_meta", []);
+        $userId = auth()->id();
+        if (empty($meta) || !isset($meta['user_id']) || $meta['user_id'] !== $userId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized or job not found.'
+            ], 403);
+        }
+
         $status = \Illuminate\Support\Facades\Cache::get("extraction_{$jobId}_status", 'unknown');
         $result = \Illuminate\Support\Facades\Cache::get("extraction_{$jobId}_result");
         $error = \Illuminate\Support\Facades\Cache::get("extraction_{$jobId}_error");
-        $meta = \Illuminate\Support\Facades\Cache::get("extraction_{$jobId}_meta", []);
 
         return response()->json([
             'success' => true,
@@ -149,6 +160,15 @@ class IctServiceRequestController extends Controller
                 'requests.*.location_venue' => 'nullable|string|max:255',
                 'requests.*.request_description' => 'nullable|string',
                 'requests.*.status' => 'nullable|string|max:255',
+                'requests.*.conducted_by' => 'nullable|string|max:255',
+                'requests.*.noted_by' => 'nullable|string|max:255',
+                'requests.*.action_taken' => 'nullable|string',
+                'requests.*.recommendation_conclusion' => 'nullable|string',
+                'requests.*.client_feedback_no' => 'nullable|string|max:255',
+                'requests.*.received_by' => 'nullable|string|max:255',
+                'requests.*.receive_date_time' => 'nullable|date',
+                'requests.*.date_time_started' => 'nullable|date',
+                'requests.*.date_time_completed' => 'nullable|date',
             ]);
 
             $now = now();
@@ -156,6 +176,18 @@ class IctServiceRequestController extends Controller
                 ->map(function (array $reqData) use ($now) {
                     // Provide defaults for nullable required fields in DB if any.
                     $name = $reqData['name'] ?? 'Unknown';
+
+                    // Helper to ensure dates are in proper database format
+                    $parseDate = function($val) {
+                        if (empty($val)) return null;
+                        try {
+                            // Carbon::parse handles various formats including M/D/Y
+                            return \Illuminate\Support\Carbon::parse($val);
+                        } catch (\Exception $e) {
+                            return null;
+                        }
+                    };
+
                     $record = [
                         'control_no' => empty($reqData['control_no']) ? null : trim((string) $reqData['control_no']),
                         'name' => $name,
@@ -163,12 +195,21 @@ class IctServiceRequestController extends Controller
                         'position' => $reqData['position'] ?? null,
                         'office_unit' => $reqData['office_unit'] ?? 'Unknown',
                         'contact_no' => $reqData['contact_no'] ?? null,
-                        'date_of_request' => $reqData['date_of_request'] ?? $now,
-                        'requested_completion_date' => $reqData['requested_completion_date'] ?? null,
+                        'date_of_request' => $parseDate($reqData['date_of_request'] ?? null) ?? $now,
+                        'requested_completion_date' => $parseDate($reqData['requested_completion_date'] ?? null),
                         'request_type' => $reqData['request_type'] ?? 'Classification pending',
                         'location_venue' => $reqData['location_venue'] ?? null,
                         'request_description' => $reqData['request_description'] ?? 'No description provided',
                         'status' => $reqData['status'] ?? 'Open',
+                        'conducted_by' => $reqData['conducted_by'] ?? null,
+                        'noted_by' => $reqData['noted_by'] ?? null,
+                        'action_taken' => $reqData['action_taken'] ?? null,
+                        'recommendation_conclusion' => $reqData['recommendation_conclusion'] ?? null,
+                        'client_feedback_no' => $reqData['client_feedback_no'] ?? null,
+                        'received_by' => $reqData['received_by'] ?? null,
+                        'receive_date_time' => $parseDate($reqData['receive_date_time'] ?? null),
+                        'date_time_started' => $parseDate($reqData['date_time_started'] ?? null),
+                        'date_time_completed' => $parseDate($reqData['date_time_completed'] ?? null),
                         'created_at' => $now,
                         'updated_at' => $now,
                     ];
@@ -212,6 +253,15 @@ class IctServiceRequestController extends Controller
                             'location_venue',
                             'request_description',
                             'status',
+                            'conducted_by',
+                            'noted_by',
+                            'action_taken',
+                            'recommendation_conclusion',
+                            'client_feedback_no',
+                            'received_by',
+                            'receive_date_time',
+                            'date_time_started',
+                            'date_time_completed',
                             'updated_at',
                         ]
                     );
@@ -241,7 +291,7 @@ class IctServiceRequestController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to process import: ' . $e->getMessage()
+                'message' => 'Failed to process import. Please contact support.'
             ], 500);
         }
     }

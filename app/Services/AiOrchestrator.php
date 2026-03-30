@@ -16,10 +16,11 @@ class AiOrchestrator
      */
     public function prompt(string $prompt, array $options = [], ?string $base64Image = null, ?string $mimeType = null, ?string $systemPrompt = null): string
     {
-        // 1. Check Budget
-        if (class_exists('App\Services\AiBudgetManager') && !AiBudgetManager::canSpend()) {
-             throw new Exception("AI Budget exceeded for this month.");
-        }
+           // 1. Check Budget (per-user)
+           $userId = auth()->id();
+           if (class_exists('App\Services\AiBudgetManager') && !AiBudgetManager::canSpend(0.0, $userId)) {
+               throw new Exception("AI Budget exceeded for this user or this month.");
+           }
 
         // 2. Try Cache if enabled
         $cacheKey = "ai_resp_" . md5($prompt . $systemPrompt . serialize($options) . ($base64Image ? md5($base64Image) : ''));
@@ -127,10 +128,11 @@ class AiOrchestrator
         $cost = ($totalTokens / 1000) * 0.0001; 
 
         try {
+            $userId = auth()->id();
             AiUsageLog::create([
                 'service' => $service,
                 'model' => $model,
-                'user_id' => auth()->id(),
+                'user_id' => $userId,
                 'prompt_tokens' => $promptTokens,
                 'completion_tokens' => $completionTokens,
                 'total_tokens' => $totalTokens,
@@ -139,7 +141,7 @@ class AiOrchestrator
             ]);
 
             if (class_exists('App\Services\AiBudgetManager')) {
-                AiBudgetManager::incrementMonthlyCost($cost);
+                AiBudgetManager::incrementMonthlyCost($cost, $userId);
             }
         } catch (Exception $e) {
             Log::warning("Could not log AI usage: " . $e->getMessage());

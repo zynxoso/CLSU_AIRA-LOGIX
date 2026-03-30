@@ -62,7 +62,8 @@ class PerformExtractionJob implements ShouldQueue
         } catch (\Throwable $e) {
             Log::error("PerformExtractionJob Failed: " . $e->getMessage());
             Cache::put("extraction_{$this->jobId}_status", 'failed', 600);
-            Cache::put("extraction_{$this->jobId}_error", $e->getMessage(), 600);
+            // Only cache a generic error for the client
+            Cache::put("extraction_{$this->jobId}_error", 'A processing error occurred. Please contact support.', 600);
         } finally {
             if (file_exists($this->filePath)) {
                 @unlink($this->filePath);

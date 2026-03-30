@@ -65,9 +65,12 @@ interface DashboardProps {
         type?: string;
         requester?: string;
     };
+    availableStatuses: string[];
+    availableTypes: string[];
+    requesters: string[];
 }
 
-export default function Dashboard({ requests, filters }: DashboardProps) {
+export default function Dashboard({ requests, filters, availableStatuses, availableTypes, requesters }: DashboardProps) {
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
 
     // Keep searchTerm in sync with filters.search (e.g., after pagination)
@@ -120,19 +123,24 @@ export default function Dashboard({ requests, filters }: DashboardProps) {
             : route('ict.export-xlsx', params);
     };
     
+    const handleFilterChange = (key: string, value: string | null) => {
+        const newFilters = { ...filters, [key]: value === 'all' ? null : value };
+        // If we change filters, we reset page
+        router.get('/dashboard', newFilters, { preserveState: true });
+    };
+
     // Auto-search logic (simple debounce)
-    // Only trigger search when user types, not after pagination/filter changes
     const [isUserTyping, setIsUserTyping] = useState(false);
     useEffect(() => {
         if (!isUserTyping) return;
         const timer = setTimeout(() => {
-            if (searchTerm !== filters.search) {
-                router.get('/dashboard', { search: searchTerm, status: filters.status }, { preserveState: true, replace: true });
+            if (searchTerm !== (filters.search || '')) {
+                router.get('/dashboard', { ...filters, search: searchTerm }, { preserveState: true, replace: true });
             }
             setIsUserTyping(false);
         }, 500);
         return () => clearTimeout(timer);
-    }, [searchTerm, filters.search, filters.status, isUserTyping]);
+    }, [searchTerm, filters, isUserTyping]);
 
     const getStatusStyles = (status: string) => {
         switch (status) {
@@ -168,34 +176,48 @@ export default function Dashboard({ requests, filters }: DashboardProps) {
                             />
                         </div>
                         
-                        <Select defaultValue="all">
-                            <SelectTrigger className="w-36 h-10 bg-card border-border text-muted-foreground">
+                        <Select 
+                            value={filters.type || 'all'} 
+                            onValueChange={(v) => handleFilterChange('type', v)}
+                        >
+                            <SelectTrigger className="w-44 h-10 bg-card border-border text-muted-foreground">
                                 <SelectValue placeholder="All Types" />
                             </SelectTrigger>
                             <SelectContent className="bg-popover border-border text-popover-foreground">
                                 <SelectItem value="all">All Types</SelectItem>
-                                <SelectItem value="technical">Technical Support</SelectItem>
-                                <SelectItem value="account">User Account</SelectItem>
+                                {availableTypes.map(type => (
+                                    <SelectItem key={type} value={type}>{type}</SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
 
-                        <Select defaultValue="all">
-                            <SelectTrigger className="w-36 h-10 bg-card border-border text-muted-foreground">
+                        <Select 
+                            value={filters.status || 'all'} 
+                            onValueChange={(v) => handleFilterChange('status', v)}
+                        >
+                            <SelectTrigger className="w-40 h-10 bg-card border-border text-muted-foreground">
                                 <SelectValue placeholder="All Status" />
                             </SelectTrigger>
                             <SelectContent className="bg-popover border-border text-popover-foreground">
                                 <SelectItem value="all">All Status</SelectItem>
-                                <SelectItem value="pending">Pending</SelectItem>
-                                <SelectItem value="completed">Completed</SelectItem>
+                                {availableStatuses.map(status => (
+                                    <SelectItem key={status} value={status}>{status}</SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
 
-                        <Select defaultValue="all">
-                            <SelectTrigger className="w-40 h-10 bg-card border-border text-muted-foreground">
+                        <Select 
+                            value={filters.requester || 'all'}
+                            onValueChange={(v) => handleFilterChange('requester', v)}
+                        >
+                            <SelectTrigger className="w-52 h-10 bg-card border-border text-muted-foreground">
                                 <SelectValue placeholder="All Requesters" />
                             </SelectTrigger>
                             <SelectContent className="bg-popover border-border text-popover-foreground">
                                 <SelectItem value="all">All Requesters</SelectItem>
+                                {requesters.map(req => (
+                                    <SelectItem key={req} value={req}>{req}</SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
 
