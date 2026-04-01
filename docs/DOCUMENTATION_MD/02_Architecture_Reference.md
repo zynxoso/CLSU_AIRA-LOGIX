@@ -39,6 +39,69 @@ E --> C
 C --> B
 ```
 
+## 6. Data Flow Diagram (DFD)
+
+```mermaid
+flowchart TD
+    %% ── External Entities ────────────────────────────────────
+    Staff["MISO Staff"]
+    Admin["Admin"]
+
+    %% ── Data Stores ──────────────────────────────────────────
+    D1[("D1\nService Request DB")]
+    D2[("D2\nReport History")]
+    D3[("D3\nUser & Auth DB")]
+
+    %% ── Processes ────────────────────────────────────────────
+    P1["1.0\nLogin &\nAuthentication"]
+    P2["2.0\nSmart Scan\nUpload"]
+    P3["3.0\nFile Type\nDetection"]
+    P4["4.0\nPhpOffice\nParser"]
+    P5["5.0\nOCR & AI\nProcessing"]
+    P6["6.0\nVerification\nScreen"]
+    P7["7.0\nReport\nGenerator"]
+    P8["8.0\nAnalytics\nDashboard"]
+    P9["9.0\nUser\nManagement"]
+
+    %% ── Data Flows ───────────────────────────────────────────
+    Staff -->|Credentials| P1
+    P1 -->|Verify account| D3
+    D3 -->|Account verified| P1
+    P1 -->|Session granted| Staff
+
+    Staff -->|Upload form file| P2
+    P2 -->|Route to detector| P3
+    P3 -->|"DOCX / XLSX"| P4
+    P3 -->|"Image / Scan"| P5
+    P4 -->|Extracted fields| P6
+    P5 -->|Normalized data| P6
+    P6 -->|Confirmed record| D1
+
+    Staff -->|Select filters| P7
+    D1 -->|Retrieved records| P7
+    P7 -->|Generated file| D2
+    D2 -->|"XLSX / DOCX report"| Staff
+
+    D1 -->|Aggregated data| P8
+    P8 -->|Charts & trends| Staff
+
+    Admin -->|Credentials| P1
+    Admin -->|Manage users| P9
+    P9 -->|Update user records| D3
+    D3 -->|User data| P9
+
+    %% ── Styles ───────────────────────────────────────────────
+    classDef process fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#1a1a1a
+    classDef store   fill:#f1f8e9,stroke:#558b2f,stroke-width:2px,color:#1a1a1a
+    classDef staff   fill:#e8f5e9,stroke:#2e7d32,stroke-width:3px,color:#1a1a1a,font-weight:bold
+    classDef admin   fill:#fce4ec,stroke:#880e4f,stroke-width:3px,color:#1a1a1a,font-weight:bold
+
+    class P1,P2,P3,P4,P5,P6,P7,P8,P9 process
+    class D1,D2,D3 store
+    class Staff staff
+    class Admin admin
+```
+
 ## 4. Key Rules of the House
 
 - React is the UI layer.

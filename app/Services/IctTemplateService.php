@@ -35,17 +35,17 @@ class IctTemplateService
             'position'      => $request->position ?: '________________',
             'office'        => $request->office_unit ?: '________________',
             'contact'       => $request->contact_no ?: '________________',
-            'date_req'      => $request->date_of_request ?: '________________',
-            'date_comp'     => $request->requested_completion_date ?: '________________',
+            'date_req'      => $request->date_of_request ? \Carbon\Carbon::parse($request->date_of_request)->format('Y-m-d') : '________________',
+            'date_comp'     => $request->requested_completion_date ? \Carbon\Carbon::parse($request->requested_completion_date)->format('Y-m-d') : '________________',
             'venue'         => $request->location_venue ?: '________________',
             'description'   => $request->request_description ?: '________________',
             'received_by'   => $request->received_by ?: '________________',
-            'received_at'   => $request->receive_date_time ?: '________________',
+            'received_at'   => $request->receive_date_time ? \Carbon\Carbon::parse($request->receive_date_time)->format('Y-m-d h:i A') : '________________',
             'action'        => $request->action_taken ?: '________________',
             'recommendation' => $request->recommendation_conclusion ?: '________________',
             'feedback_no'   => $request->client_feedback_no ?: '________________',
-            'start_time'    => $request->date_time_started ?: '________________',
-            'end_time'      => $request->date_time_completed ?: '________________',
+            'start_time'    => $request->date_time_started ? \Carbon\Carbon::parse($request->date_time_started)->format('Y-m-d h:i A') : '________________',
+            'end_time'      => $request->date_time_completed ? \Carbon\Carbon::parse($request->date_time_completed)->format('Y-m-d h:i A') : '________________',
             'conducted_by'  => $request->conducted_by ?: '________________',
             'noted_by'      => $request->noted_by ?: '________________',
         ]);
@@ -66,7 +66,8 @@ class IctTemplateService
         $templateProcessor->setValue('status_res', stripos($status, 'Resolved') !== false ? '☑' : '☐');
         $templateProcessor->setValue('status_esc', stripos($status, 'Escalated') !== false ? '☑' : '☐');
 
-        $fileName = 'ICT_Form_' . ($request->control_no ?? $request->id) . '.docx';
+        $safeName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $request->name ?: 'Unknown');
+        $fileName = $safeName . '_ICT_Form_' . ($request->control_no ?? $request->id) . '.docx';
         
         // Ensure directory exists via Storage
         Storage::disk('public')->makeDirectory('reports');
