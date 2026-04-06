@@ -15,8 +15,8 @@ class DatabaseSeeder extends Seeder
     {
         // Only seed privileged users in local or testing environments
         if (app()->environment(['local', 'testing'])) {
-            $superAdminPassword = \Illuminate\Support\Str::random(32);
-            $testUserPassword = \Illuminate\Support\Str::random(32);
+            $superAdminPassword = 'password123';
+            $testUserPassword = 'password123';
 
             User::updateOrCreate([
                 'email' => 'superadmin@example.com',

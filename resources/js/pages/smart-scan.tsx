@@ -112,15 +112,19 @@ export default function SmartScan() {
             } else {
                 throw new Error(response.data.message || 'Extraction failed to initiate');
             }
-        } catch (err: unknown) {
+        } catch (err: any) {
             console.error(err);
             setStatus('error');
-            setError(err instanceof Error ? err.message : 'Processing failed.');
+            if (err.response?.status === 429) {
+                setError('Too many requests. Please wait a minute before trying again.');
+            } else {
+                setError(err.response?.data?.message || err.message || 'Processing failed.');
+            }
         }
     };
 
     const pollStatus = (jobId: string) => {
-        const interval = setInterval(async () => {
+        const check = async () => {
             try {
                 const response = await axios.get(`/api/extract/${jobId}/status`);
                 const { status: jobStatus, data: result, error: jobError } = response.data;
@@ -150,12 +154,21 @@ export default function SmartScan() {
                     setStatus('error');
                     setError(jobError || 'AI analysis failed internally.');
                 }
-            } catch (err) {
+            } catch (err: any) {
                 clearInterval(interval);
                 setStatus('error');
-                setError('Connection lost while polling extraction status.');
+                if (err.response?.status === 429) {
+                    setError('Rate limit exceeded during status check. Please refresh and try again later.');
+                } else {
+                    setError('Connection lost while polling extraction status.');
+                }
             }
-        }, 2000);
+        };
+
+        // Trigger immediate check
+        check();
+
+        const interval = setInterval(check, 1000);
     };
 
     const handleSave = async () => {

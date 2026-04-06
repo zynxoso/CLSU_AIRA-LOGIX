@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('role')->default('admin')->after('password');
             $table->json('permissions')->nullable()->after('role');
+            $table->boolean('must_reset_password')->default(false)->after('permissions');
         });
 
         DB::table('users')
@@ -34,7 +35,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['role', 'permissions']);
+            $table->dropColumn(['role', 'permissions', 'must_reset_password']);
         });
     }
 };

@@ -42,11 +42,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('dashboard/smart-scan', [IctServiceRequestController::class, 'smartScan'])->name('ict.smart-scan');
         Route::get('dashboard/intake', [IctServiceRequestController::class, 'intake'])->name('ict.intake');
         Route::post('dashboard/intake', [IctServiceRequestController::class, 'store'])->name('ict.store');
-        // Throttle AI-cost endpoints: 10/minute per user
-        Route::post('api/extract', [IctServiceRequestController::class, 'extract'])->middleware('throttle:10,1')->name('api.ict.extract');
-        Route::get('api/extract/{jobId}/status', [IctServiceRequestController::class, 'checkStatus'])->middleware('throttle:10,1')->name('api.ict.extract.status');
-        Route::post('api/requests', [IctServiceRequestController::class, 'storeManual'])->middleware('throttle:10,1')->name('api.ict.store-manual');
-        Route::post('api/requests/batch', [IctServiceRequestController::class, 'storeBatch'])->middleware('throttle:10,1')->name('api.ict.store-batch');
+        Route::post('api/extract', [IctServiceRequestController::class, 'extract'])->name('api.ict.extract'); //->middleware('throttle:15,1')
+        Route::get('api/extract/{jobId}/status', [IctServiceRequestController::class, 'checkStatus'])->name('api.ict.extract.status'); //->middleware('throttle:60,1')
+        Route::post('api/requests', [IctServiceRequestController::class, 'storeManual'])->name('api.ict.store-manual'); //->middleware('throttle:20,1')
+        Route::post('api/requests/batch', [IctServiceRequestController::class, 'storeBatch'])->name('api.ict.store-batch'); //->middleware('throttle:20,1')
     });
 
     Route::middleware('can:access-documentation')->group(function () {

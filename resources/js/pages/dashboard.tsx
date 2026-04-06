@@ -2,10 +2,10 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type IctServiceRequest } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
 import { cn } from '@/lib/utils';
-import { 
-    Plus, 
-    Search, 
-    MoreHorizontal, 
+import {
+    Plus,
+    Search,
+    MoreHorizontal,
     Archive,
     FileSpreadsheet,
     FileArchive,
@@ -78,26 +78,26 @@ export default function Dashboard({ requests, filters, availableStatuses, availa
         setSearchTerm(filters.search || '');
     }, [filters.search]);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
-    
+
     const [confirmAction, setConfirmAction] = useState<{ isOpen: boolean; type: 'delete' | 'archive' | 'restore'; id: number | null }>({
         isOpen: false,
         type: 'archive',
         id: null
     });
-    
+
     const handleDelete = (id: number) => setConfirmAction({ isOpen: true, type: 'delete', id });
     const handleArchive = (id: number) => setConfirmAction({ isOpen: true, type: 'archive', id });
     const handleRestore = (id: number) => setConfirmAction({ isOpen: true, type: 'restore', id });
 
     const executeConfirmAction = () => {
         if (!confirmAction.id) return;
-        
+
         if (confirmAction.type === 'delete' || confirmAction.type === 'archive') {
             router.delete(route('ict.destroy', confirmAction.id), { preserveState: true, preserveScroll: true });
         } else if (confirmAction.type === 'restore') {
             router.post(route('ict.restore', confirmAction.id), {}, { preserveState: true, preserveScroll: true });
         }
-        
+
         setConfirmAction({ ...confirmAction, isOpen: false });
     };
 
@@ -118,11 +118,11 @@ export default function Dashboard({ requests, filters, availableStatuses, availa
         if (selectedIds.length > 0) {
             params.ids = selectedIds.join(',');
         }
-        return format === 'csv' 
-            ? route('ict.export-csv', params) 
+        return format === 'csv'
+            ? route('ict.export-csv', params)
             : route('ict.export-xlsx', params);
     };
-    
+
     const handleFilterChange = (key: string, value: string | null) => {
         const newFilters = { ...filters, [key]: value === 'all' ? null : value };
         // If we change filters, we reset page
@@ -162,22 +162,22 @@ export default function Dashboard({ requests, filters, availableStatuses, availa
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="ICT Dashboard" />
-            
+
             <div className="flex flex-col gap-6 p-6 bg-background min-h-full">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                         <div className="relative w-64">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-500" />
-                            <Input 
-                                placeholder="Search records..." 
+                            <Input
+                                placeholder="Search records..."
                                 className="pl-9 h-10 bg-card border-border text-foreground focus:ring-accent"
                                 value={searchTerm}
                                 onChange={(e) => { setSearchTerm(e.target.value); setIsUserTyping(true); }}
                             />
                         </div>
-                        
-                        <Select 
-                            value={filters.type || 'all'} 
+
+                        <Select
+                            value={filters.type || 'all'}
                             onValueChange={(v) => handleFilterChange('type', v)}
                         >
                             <SelectTrigger className="w-44 h-10 bg-card border-border text-muted-foreground">
@@ -191,8 +191,8 @@ export default function Dashboard({ requests, filters, availableStatuses, availa
                             </SelectContent>
                         </Select>
 
-                        <Select 
-                            value={filters.status || 'all'} 
+                        <Select
+                            value={filters.status || 'all'}
                             onValueChange={(v) => handleFilterChange('status', v)}
                         >
                             <SelectTrigger className="w-40 h-10 bg-card border-border text-muted-foreground">
@@ -206,7 +206,7 @@ export default function Dashboard({ requests, filters, availableStatuses, availa
                             </SelectContent>
                         </Select>
 
-                        <Select 
+                        <Select
                             value={filters.requester || 'all'}
                             onValueChange={(v) => handleFilterChange('requester', v)}
                         >
@@ -221,8 +221,8 @@ export default function Dashboard({ requests, filters, availableStatuses, availa
                             </SelectContent>
                         </Select>
 
-                        <Button 
-                            variant="outline" 
+                        <Button
+                            variant="outline"
                             className={cn(
                                 "h-10 transition-colors uppercase tracking-widest text-[10px] font-bold px-4",
                                 filters.archived
@@ -246,15 +246,15 @@ export default function Dashboard({ requests, filters, availableStatuses, availa
                                     <FileArchive className="mr-1 size-3 text-muted-foreground" /> CSV
                                 </a>
                             </Button>
-                             <Button variant="ghost" size="sm" className="h-8 text-[10px] font-bold text-primary hover:text-primary/80 uppercase tracking-tighter hover:bg-primary/10" asChild>
+                            <Button variant="ghost" size="sm" className="h-8 text-[10px] font-bold text-primary hover:text-primary/80 uppercase tracking-tighter hover:bg-primary/10" asChild>
                                 <a href={getExportUrl('xlsx')}>
                                     <FileSpreadsheet className="mr-1 size-3 text-primary" /> XLSX
                                 </a>
                             </Button>
                         </div>
 
-                        
-                        <Button 
+
+                        <Button
                             className="h-10 bg-primary text-primary-foreground hover:bg-primary/90 font-bold px-6"
                             asChild
                         >
@@ -272,8 +272,8 @@ export default function Dashboard({ requests, filters, availableStatuses, availa
                             <thead>
                                 <tr className="border-b border-border text-[11px] font-bold text-muted-foreground uppercase tracking-widest bg-muted/30">
                                     <th className="px-6 py-5 text-center w-12">
-                                        <Checkbox 
-                                            className="border-border" 
+                                        <Checkbox
+                                            className="border-border"
                                             checked={requests.data.length > 0 && selectedIds.length === requests.data.length}
                                             onCheckedChange={toggleAll}
                                         />
@@ -293,14 +293,14 @@ export default function Dashboard({ requests, filters, availableStatuses, availa
                                     return (
                                         <tr key={req.id} className={cn("hover:bg-muted/50 transition-colors group", selectedIds.includes(req.id) && "bg-muted/30")}>
                                             <td className="px-6 py-4 text-center">
-                                                <Checkbox 
-                                                    className="border-border bg-transparent" 
+                                                <Checkbox
+                                                    className="border-border bg-transparent"
                                                     checked={selectedIds.includes(req.id)}
                                                     onCheckedChange={() => toggleSelect(req.id)}
                                                 />
                                             </td>
                                             <td className="px-6 py-4">
-                                                 <Link href={`/dashboard/requests/${req.id}`} className="font-bold text-primary hover:text-primary/80 transition-colors tracking-tight">
+                                                <Link href={`/dashboard/requests/${req.id}`} className="font-bold text-primary hover:text-primary/80 transition-colors tracking-tight">
                                                     {req.control_no || `ICT-${new Date().getFullYear()}-${String(req.id).padStart(4, '0')}`}
                                                 </Link>
                                             </td>
@@ -338,7 +338,7 @@ export default function Dashboard({ requests, filters, availableStatuses, availa
                                                     <DropdownMenuContent align="end" className="bg-popover border-border text-popover-foreground w-40">
                                                         {!filters.archived ? (
                                                             <>
-                                                                <DropdownMenuItem 
+                                                                <DropdownMenuItem
                                                                     asChild
                                                                     className="hover:bg-muted cursor-pointer flex items-center gap-2"
                                                                 >
@@ -346,7 +346,7 @@ export default function Dashboard({ requests, filters, availableStatuses, availa
                                                                         <Pencil className="size-3 text-primary" /> Edit Record
                                                                     </Link>
                                                                 </DropdownMenuItem>
-                                                                <DropdownMenuItem 
+                                                                <DropdownMenuItem
                                                                     asChild
                                                                     className="hover:bg-muted cursor-pointer flex items-center gap-2 text-foreground focus:text-primary"
                                                                 >
@@ -354,7 +354,7 @@ export default function Dashboard({ requests, filters, availableStatuses, availa
                                                                         <Archive className="size-3" /> Download DOCX
                                                                     </a>
                                                                 </DropdownMenuItem>
-                                                                <DropdownMenuItem 
+                                                                <DropdownMenuItem
                                                                     className="hover:bg-muted cursor-pointer flex items-center gap-2 text-amber-500 focus:text-amber-600"
                                                                     onClick={() => handleArchive(req.id)}
                                                                 >
@@ -363,13 +363,13 @@ export default function Dashboard({ requests, filters, availableStatuses, availa
                                                             </>
                                                         ) : (
                                                             <>
-                                                                <DropdownMenuItem 
+                                                                <DropdownMenuItem
                                                                     className="hover:bg-muted cursor-pointer flex items-center gap-2 text-emerald-500 focus:text-emerald-600"
                                                                     onClick={() => handleRestore(req.id)}
                                                                 >
                                                                     <RefreshCcw className="size-3" /> Restore Record
                                                                 </DropdownMenuItem>
-                                                                <DropdownMenuItem 
+                                                                <DropdownMenuItem
                                                                     className="hover:bg-muted cursor-pointer flex items-center gap-2 text-rose-500 focus:text-rose-600"
                                                                     onClick={() => handleDelete(req.id)}
                                                                 >
@@ -434,8 +434,8 @@ export default function Dashboard({ requests, filters, availableStatuses, availa
             </div>
 
             {/* Confirmation Dialog */}
-            <Dialog 
-                open={confirmAction.isOpen} 
+            <Dialog
+                open={confirmAction.isOpen}
                 onOpenChange={(open) => !open && setConfirmAction({ ...confirmAction, isOpen: false })}
             >
                 <DialogContent className="sm:max-w-md border-border bg-card text-foreground">
@@ -452,15 +452,15 @@ export default function Dashboard({ requests, filters, availableStatuses, availa
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="sm:justify-end gap-2 mt-4">
-                        <Button 
-                            variant="outline" 
+                        <Button
+                            variant="outline"
                             onClick={() => setConfirmAction({ ...confirmAction, isOpen: false })}
                             className="bg-card hover:bg-muted text-foreground border-border"
                         >
                             Cancel
                         </Button>
-                        <Button 
-                            variant={confirmAction.type === 'delete' ? 'destructive' : 'default'} 
+                        <Button
+                            variant={confirmAction.type === 'delete' ? 'destructive' : 'default'}
                             onClick={executeConfirmAction}
                             className={cn(
                                 confirmAction.type === 'archive' && 'bg-amber-600 hover:bg-amber-700 text-white',

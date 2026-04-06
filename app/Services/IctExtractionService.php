@@ -61,6 +61,10 @@ class IctExtractionService
         $checkboxResult = $this->docxCheckboxExtractor->determineRequestType($filePath, $text);
 
         Log::info("IctExtractionService: Proceeding to AI parsing.");
-        return $this->aiParserService->parse($text, $checkboxResult);
+        $result = $this->aiParserService->parse($text, $checkboxResult);
+        
+        Log::debug("IctExtractionService: Extraction complete. Result type: " . (is_array($result) ? "Array" : gettype($result)));
+        
+        return $result;
     }
 }

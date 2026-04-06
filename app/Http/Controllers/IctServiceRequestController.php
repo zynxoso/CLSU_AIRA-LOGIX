@@ -66,17 +66,18 @@ class IctServiceRequestController extends Controller
 
             \Illuminate\Support\Facades\Log::info("Smart Scan Import Initiated - Extracting from " . strtoupper($file->getClientOriginalExtension()) . " file: [{$originalName}]");
 
-            // Use cryptographically secure random string for jobId
-            $jobId = 'ext_' . \Illuminate\Support\Str::random(32);
-            \App\Jobs\PerformExtractionJob::dispatch($fullPath, $jobId);
-
             $userId = auth()->id();
+            $jobId = 'ext_' . \Illuminate\Support\Str::random(32);
             \Illuminate\Support\Facades\Cache::put("extraction_{$jobId}_status", 'queued', 600);
             \Illuminate\Support\Facades\Cache::put("extraction_{$jobId}_meta", [
                 'original_filename' => $originalName,
                 'path' => $path,
                 'user_id' => $userId,
             ], 600);
+
+            \App\Jobs\PerformExtractionJob::dispatch($fullPath, $jobId);
+
+            \Illuminate\Support\Facades\Log::debug("Smart Scan Dispatching Job: [{$jobId}] for user [{$userId}] with file: [{$originalName}]");
 
             return response()->json([
                 'success' => true,
@@ -110,13 +111,15 @@ class IctServiceRequestController extends Controller
         $result = \Illuminate\Support\Facades\Cache::get("extraction_{$jobId}_result");
         $error = \Illuminate\Support\Facades\Cache::get("extraction_{$jobId}_error");
 
-        return response()->json([
-            'success' => true,
-            'status' => $status,
-            'data' => $result,
-            'error' => $error,
-            'meta' => $meta
-        ]);
+            \Illuminate\Support\Facades\Log::debug("Smart Scan Job [{$jobId}] Status Check: [{$status}] for User [{$userId}]");
+
+            return response()->json([
+                'success' => true,
+                'status' => $status,
+                'data' => $result,
+                'error' => $error,
+                'meta' => $meta
+            ]);
     }
 
     public function storeManual(Request $request)
@@ -172,21 +175,55 @@ class IctServiceRequestController extends Controller
             ]);
 
             $now = now();
-            $normalized = collect($validated['requests'])
-                ->map(function (array $reqData) use ($now) {
-                    // Provide defaults for nullable required fields in DB if any.
-                    $name = $reqData['name'] ?? 'Unknown';
+            $validYearMin = 2000;
+            $validYearMax = 2100;
+            $invalidDatePlaceholders = ['?', 'n/a', 'na', 'none', 'null', '-', '--', 'n.a', 'n.a.'];
 
-                    // Helper to ensure dates are in proper database format
-                    $parseDate = function($val) {
-                        if (empty($val)) return null;
-                        try {
-                            // Carbon::parse handles various formats including M/D/Y
-                            return \Illuminate\Support\Carbon::parse($val);
-                        } catch (\Exception $e) {
+            $parseDate = function ($val) use ($validYearMin, $validYearMax, $invalidDatePlaceholders) {
+                if ($val === null) {
+                    return null;
+                }
+
+                try {
+                    if ($val instanceof \DateTimeInterface) {
+                        $dt = \Illuminate\Support\Carbon::instance($val);
+                    } else {
+                        $raw = trim((string) $val);
+
+                        if ($raw === '' || in_array(strtolower($raw), $invalidDatePlaceholders, true)) {
                             return null;
                         }
-                    };
+
+                        $dt = \Illuminate\Support\Carbon::parse($raw);
+                    }
+
+                    // Repair common OCR year mistakes like 0025 -> 2025.
+                    if ($dt->year < 100) {
+                        $dt->year = 2000 + $dt->year;
+                    }
+
+                    // Repair 4-digit years that lost the leading "2", e.g. 1026 -> 2026.
+                    if ($dt->year >= 1000 && $dt->year < 2000) {
+                        $candidateYear = $dt->year + 1000;
+                        if ($candidateYear <= $validYearMax) {
+                            $dt->year = $candidateYear;
+                        }
+                    }
+
+                    if ($dt->year < $validYearMin || $dt->year > $validYearMax) {
+                        return null;
+                    }
+
+                    return $dt->format('Y-m-d H:i:s');
+                } catch (\Throwable $e) {
+                    return null;
+                }
+            };
+
+            $normalized = collect($validated['requests'])
+                ->map(function (array $reqData) use ($now, $parseDate) {
+                    // Provide defaults for nullable required fields in DB if any.
+                    $name = $reqData['name'] ?? 'Unknown';
 
                     $record = [
                         'control_no' => empty($reqData['control_no']) ? null : trim((string) $reqData['control_no']),
@@ -195,7 +232,7 @@ class IctServiceRequestController extends Controller
                         'position' => $reqData['position'] ?? null,
                         'office_unit' => $reqData['office_unit'] ?? 'Unknown',
                         'contact_no' => $reqData['contact_no'] ?? null,
-                        'date_of_request' => $parseDate($reqData['date_of_request'] ?? null) ?? $now,
+                        'date_of_request' => $parseDate($reqData['date_of_request'] ?? null) ?? $now->format('Y-m-d H:i:s'),
                         'requested_completion_date' => $parseDate($reqData['requested_completion_date'] ?? null),
                         'request_type' => $reqData['request_type'] ?? 'Classification pending',
                         'location_venue' => $reqData['location_venue'] ?? null,
@@ -273,6 +310,7 @@ class IctServiceRequestController extends Controller
             });
 
             \Illuminate\Support\Facades\Log::info("Smart Scan Batch Import Completed - Extracted & saved {$savedCount} records.");
+            \Illuminate\Support\Facades\Log::debug("Smart Scan Batch Import Details: User [" . auth()->id() . "] saved {$savedCount} records via storeBatch");
 
             return response()->json([
                 'success' => true,

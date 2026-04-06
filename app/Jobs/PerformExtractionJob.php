@@ -47,15 +47,20 @@ class PerformExtractionJob implements ShouldQueue
             Cache::put("extraction_{$this->jobId}_status", 'processing', 600);
             
             $extension = strtolower(pathinfo($this->filePath, PATHINFO_EXTENSION));
+            Log::debug("PerformExtractionJob: Identified extension: [{$extension}] for Job: {$this->jobId}");
 
             if (in_array($extension, ['jpg', 'jpeg', 'png', 'webp'])) {
+                Log::debug("PerformExtractionJob: Using IctImageExtractionService for image extraction. Job: {$this->jobId}");
                 $service = app(IctImageExtractionService::class);
                 $extractedData = $service->extract($this->filePath);
             } else {
+                Log::debug("PerformExtractionJob: Using IctExtractionService for document extraction. Job: {$this->jobId}");
                 $service = app(IctExtractionService::class);
                 $extractedData = $service->extractFromFile($this->filePath);
             }
 
+            Log::debug("PerformExtractionJob: Extraction successful for Job: {$this->jobId}. Data keys count: " . (is_array($extractedData) ? count($extractedData) : 'non-array result'));
+            
             Cache::put("extraction_{$this->jobId}_result", $extractedData, 600);
             Cache::put("extraction_{$this->jobId}_status", 'completed', 600);
             
