@@ -50,5 +50,34 @@ class AuthenticationTest extends TestCase
 
         $this->assertGuest();
         $response->assertRedirect('/');
+        $cacheControl = $response->headers->get('Cache-Control') ?? '';
+        $this->assertStringContainsString('no-store', $cacheControl);
+        $this->assertStringContainsString('no-cache', $cacheControl);
+        $this->assertStringContainsString('must-revalidate', $cacheControl);
+        $this->assertStringContainsString('max-age=0', $cacheControl);
+        $response->assertHeader('Pragma', 'no-cache');
+        $response->assertHeader('Expires', 'Fri, 01 Jan 1990 00:00:00 GMT');
+    }
+
+    public function test_logout_sets_the_inertia_clear_history_session_flag()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post('/logout');
+
+        $response->assertSessionHas('inertia.clear_history', true);
+    }
+
+    public function test_users_cannot_access_protected_routes_after_logging_out()
+    {
+        $user = User::factory()->create([
+            'role' => 'super_admin',
+            'permissions' => ['dashboard', 'smart_scan', 'documentation', 'ai_consumption'],
+        ]);
+
+        $this->actingAs($user)->post('/logout');
+
+        $this->get('/dashboard')->assertRedirect('/login');
+        $this->get('/superadmin/users')->assertRedirect('/login');
     }
 }

@@ -49,6 +49,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        Inertia::clearHistory();
 
         return redirect('/')
             ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
