@@ -35,3 +35,26 @@ export interface IctServiceRequest {
 }
 
 export type IctFormData = Partial<Omit<IctServiceRequest, 'id' | 'created_at' | 'updated_at'>>;
+
+export interface MisoAccomplishment {
+    id: number;
+    category: 'data_management' | 'network' | 'systems_development';
+    source_file?: string | null;
+    source_row?: number | null;
+    record_no?: string | null;
+    project_title?: string | null;
+    project_lead?: string | null;
+    project_members?: string | null;
+    budget_cost?: string | null;
+    implementing_unit?: string | null;
+    target_activities?: string | null;
+    intended_duration?: string | null;
+    start_date?: string | null;
+    target_end_date?: string | null;
+    reporting_period?: string | null;
+    completion_percentage?: string | null;
+    overall_status?: string | null;
+    remarks?: string | null;
+    created_at: string;
+    updated_at: string;
+}

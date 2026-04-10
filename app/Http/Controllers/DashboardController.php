@@ -3,14 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\IctServiceRequest;
+use App\Models\MisoAccomplishment;
+use App\Services\MisoAccomplishmentSyncService;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
+    public function __construct(
+        protected MisoAccomplishmentSyncService $misoSyncService
+    ) {}
+
     public function index(Request $request)
     {
+        $tabCategoryMap = $this->misoSyncService->tabCategoryMap();
+        $activeTab = (string) $request->query('tab', 'ict');
+
+        if ($activeTab !== 'ict' && !array_key_exists($activeTab, $tabCategoryMap)) {
+            $activeTab = 'ict';
+        }
+
         $metrics = Cache::remember('dashboard.metrics.summary', now()->addSeconds(60), function () {
             $row = IctServiceRequest::query()
                 ->selectRaw('COUNT(*) as total')
@@ -31,68 +44,164 @@ class DashboardController extends Controller
             ];
         });
 
-        $query = IctServiceRequest::query();
+        $tabs = array_merge([
+            ['key' => 'ict', 'label' => 'ICT Form Requests'],
+        ], collect($this->misoSyncService->tabLabels())
+            ->map(fn (string $label, string $key) => ['key' => $key, 'label' => $label])
+            ->values()
+            ->all());
 
-        // Get unique requesters for the filter dropdown
-        $requesters = Cache::remember('dashboard.requesters.list', now()->addMinutes(10), function () {
-            return IctServiceRequest::query()
-                ->select('name')
-                ->distinct()
-                ->orderBy('name')
-                ->pluck('name');
-        });
+        $requests = null;
+        $requesters = [];
+        $availableStatuses = [];
+        $availableTypes = [];
+        $filterMeta = [
+            'searchPlaceholder' => 'Search records...',
+            'typeLabel' => 'Type of Request',
+            'requesterLabel' => 'Requester',
+            'statusLabel' => 'Status',
+        ];
 
-        if ($request->boolean('archived')) {
-            $query->onlyTrashed();
-        }
+        if ($activeTab === 'ict') {
+            $query = IctServiceRequest::query();
 
-        if ($request->filled('search')) {
-            $search = $request->query('search');
-            $query->where(function($q) use ($search) {
-                $q->where('control_no', 'like', "%{$search}%")
-                  ->orWhere('status', 'like', "%{$search}%")
-                  ->orWhere('request_type', 'like', "%{$search}%")
-                  ->orWhere('name', 'like', "%{$search}%")
-                  ->orWhere('office_unit', 'like', "%{$search}%");
+            $requesters = Cache::remember('dashboard.requesters.list', now()->addMinutes(10), function () {
+                return IctServiceRequest::query()
+                    ->select('name')
+                    ->distinct()
+                    ->orderBy('name')
+                    ->pluck('name')
+                    ->filter(fn (?string $name) => filled($name))
+                    ->values();
             });
-        }
 
-        if ($request->filled('status') && $request->status !== 'all') {
-            $query->where('status', $request->status);
-        }
+            if ($request->boolean('archived')) {
+                $query->onlyTrashed();
+            }
 
-        if ($request->filled('type') && $request->type !== 'all') {
-            $query->where('request_type', $request->type);
-        }
+            if ($request->filled('search')) {
+                $search = $request->query('search');
+                $query->where(function ($q) use ($search) {
+                    $q->where('control_no', 'like', "%{$search}%")
+                        ->orWhere('status', 'like', "%{$search}%")
+                        ->orWhere('request_type', 'like', "%{$search}%")
+                        ->orWhere('name', 'like', "%{$search}%")
+                        ->orWhere('office_unit', 'like', "%{$search}%");
+                });
+            }
 
-        if ($request->filled('requester') && $request->requester !== 'all') {
-            $query->where('name', $request->requester);
-        }
+            if ($request->filled('status') && $request->status !== 'all') {
+                $query->where('status', $request->status);
+            }
 
-        $requests = $query->latest('updated_at')->paginate(10)->withQueryString();
+            if ($request->filled('type') && $request->type !== 'all') {
+                $query->where('request_type', $request->type);
+            }
 
-        return Inertia::render('dashboard', [
-            'metrics' => $metrics,
-            'requests' => $requests,
-            'requesters' => $requesters,
-            'availableStatuses' => [
-                'Pending', 
-                'In Progress', 
-                'Resolved', 
-                'Completed', 
-                'Cancelled', 
-                'Open'
-            ],
-            'availableTypes' => [
+            if ($request->filled('requester') && $request->requester !== 'all') {
+                $query->where('name', $request->requester);
+            }
+
+            $requests = $query->latest('updated_at')->paginate(10)->withQueryString();
+            $availableStatuses = [
+                'Pending',
+                'In Progress',
+                'Resolved',
+                'Completed',
+                'Cancelled',
+                'Open',
+            ];
+            $availableTypes = [
                 'Technical Support',
                 'Network/Internet',
                 'Hardware Repair',
                 'Software Install',
                 'User Account Management',
                 'System Development',
-                'Others'
-            ],
-            'filters' => $request->only(['search', 'status', 'type', 'requester', 'archived']),
+                'Others',
+            ];
+        } else {
+            $category = $tabCategoryMap[$activeTab];
+            $query = MisoAccomplishment::query()->where('category', $category);
+
+            if ($request->boolean('archived')) {
+                $query->onlyTrashed();
+            }
+
+            if ($request->filled('search')) {
+                $search = $request->query('search');
+                $query->where(function ($q) use ($search) {
+                    $q->where('project_title', 'like', "%{$search}%")
+                        ->orWhere('project_lead', 'like', "%{$search}%")
+                        ->orWhere('implementing_unit', 'like', "%{$search}%")
+                        ->orWhere('target_activities', 'like', "%{$search}%")
+                        ->orWhere('remarks', 'like', "%{$search}%");
+                });
+            }
+
+            if ($request->filled('status') && $request->status !== 'all') {
+                $query->where('overall_status', $request->status);
+            }
+
+            if ($request->filled('type') && $request->type !== 'all') {
+                $query->where('implementing_unit', $request->type);
+            }
+
+            if ($request->filled('requester') && $request->requester !== 'all') {
+                $query->where('project_lead', $request->requester);
+            }
+
+            $requests = $query->latest('updated_at')->paginate(10)->withQueryString();
+
+            $requesters = MisoAccomplishment::query()
+                ->where('category', $category)
+                ->whereNotNull('project_lead')
+                ->where('project_lead', '!=', '')
+                ->select('project_lead')
+                ->distinct()
+                ->orderBy('project_lead')
+                ->pluck('project_lead');
+
+            $availableStatuses = MisoAccomplishment::query()
+                ->where('category', $category)
+                ->whereNotNull('overall_status')
+                ->where('overall_status', '!=', '')
+                ->select('overall_status')
+                ->distinct()
+                ->orderBy('overall_status')
+                ->pluck('overall_status')
+                ->values()
+                ->all();
+
+            $availableTypes = MisoAccomplishment::query()
+                ->where('category', $category)
+                ->whereNotNull('implementing_unit')
+                ->where('implementing_unit', '!=', '')
+                ->select('implementing_unit')
+                ->distinct()
+                ->orderBy('implementing_unit')
+                ->pluck('implementing_unit')
+                ->values()
+                ->all();
+
+            $filterMeta = [
+                'searchPlaceholder' => 'Search project title, lead, unit, activities...',
+                'typeLabel' => 'Implementing Unit',
+                'requesterLabel' => 'Project Lead',
+                'statusLabel' => 'Overall Status',
+            ];
+        }
+
+        return Inertia::render('dashboard', [
+            'metrics' => $metrics,
+            'requests' => $requests,
+            'requesters' => $requesters,
+            'availableStatuses' => $availableStatuses,
+            'availableTypes' => $availableTypes,
+            'tabs' => $tabs,
+            'activeTab' => $activeTab,
+            'filterMeta' => $filterMeta,
+            'filters' => $request->only(['tab', 'search', 'status', 'type', 'requester', 'archived']),
         ]);
     }
 }

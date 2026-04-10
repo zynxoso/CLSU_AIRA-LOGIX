@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\SuperAdminDashboardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IctServiceRequestController;
+use App\Http\Controllers\MisoAccomplishmentController;
 use App\Http\Controllers\AiConsumptionController;
 use App\Http\Controllers\DocumentationController;
 use App\Http\Controllers\AnalyticsController;
@@ -36,16 +37,31 @@ Route::middleware(['auth'])->group(function () {
         Route::get('dashboard/export/csv', [IctServiceRequestController::class, 'export'])->name('ict.export-csv');
         Route::get('dashboard/export/xlsx', [IctServiceRequestController::class, 'exportXlsx'])->name('ict.export-xlsx');
         Route::get('dashboard/export/bulk-docx', [IctServiceRequestController::class, 'exportBulkDocx'])->name('ict.export-bulk-docx');
+        Route::get('dashboard/miso/export/csv', [MisoAccomplishmentController::class, 'export'])->name('miso.export-csv');
+        Route::get('dashboard/miso/export/xlsx', [MisoAccomplishmentController::class, 'exportXlsx'])->name('miso.export-xlsx');
+
+        Route::get('miso-accomplishments/create', [MisoAccomplishmentController::class, 'intake'])->name('miso.create');
+        Route::get('miso-accomplishments/{id}/edit', [MisoAccomplishmentController::class, 'edit'])->name('miso.edit');
+        Route::post('miso-accomplishments', [MisoAccomplishmentController::class, 'store'])->name('miso.store');
+        Route::put('miso-accomplishments/{id}', [MisoAccomplishmentController::class, 'update'])->name('miso.update');
+        Route::delete('miso-accomplishments/{id}', [MisoAccomplishmentController::class, 'destroy'])->name('miso.destroy');
+        Route::post('miso-accomplishments/{id}/restore', [MisoAccomplishmentController::class, 'restore'])->name('miso.restore');
+        Route::get('miso-accomplishments/{id}/download', [MisoAccomplishmentController::class, 'download'])->name('miso.download');
     });
 
     Route::middleware('can:access-smart-scan')->group(function () {
         Route::get('dashboard/smart-scan', [IctServiceRequestController::class, 'smartScan'])->name('ict.smart-scan');
+        Route::get('dashboard/miso-smart-scan', [MisoAccomplishmentController::class, 'smartScan'])->name('miso.smart-scan');
         Route::get('dashboard/intake', [IctServiceRequestController::class, 'intake'])->name('ict.intake');
         Route::post('dashboard/intake', [IctServiceRequestController::class, 'store'])->name('ict.store');
         Route::post('api/extract', [IctServiceRequestController::class, 'extract'])->name('api.ict.extract'); //->middleware('throttle:15,1')
         Route::get('api/extract/{jobId}/status', [IctServiceRequestController::class, 'checkStatus'])->name('api.ict.extract.status'); //->middleware('throttle:60,1')
         Route::post('api/requests', [IctServiceRequestController::class, 'storeManual'])->name('api.ict.store-manual'); //->middleware('throttle:20,1')
         Route::post('api/requests/batch', [IctServiceRequestController::class, 'storeBatch'])->name('api.ict.store-batch'); //->middleware('throttle:20,1')
+        Route::post('api/miso/extract', [MisoAccomplishmentController::class, 'extract'])->name('api.miso.extract'); //->middleware('throttle:15,1')
+        Route::get('api/miso/extract/{jobId}/status', [MisoAccomplishmentController::class, 'checkStatus'])->name('api.miso.extract.status'); //->middleware('throttle:60,1')
+        Route::post('api/miso/requests', [MisoAccomplishmentController::class, 'storeManual'])->name('api.miso.store-manual'); //->middleware('throttle:20,1')
+        Route::post('api/miso/requests/batch', [MisoAccomplishmentController::class, 'storeBatch'])->name('api.miso.store-batch'); //->middleware('throttle:20,1')
     });
 
     Route::middleware('can:access-documentation')->group(function () {

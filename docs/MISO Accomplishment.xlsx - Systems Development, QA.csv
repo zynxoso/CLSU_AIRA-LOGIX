@@ -1,0 +1,97 @@
+No.,"Project Title 
+(Specific Function/ Module/ Feature)","Project Lead
+(i.e., lead personnel/ lead developer)",Project Member/s,Budget/Cost,"Implementing Unit 
+(e.g., MISO x OAD) ",Intended Duration,Target Activities,"Start Date 
+(i.e., Month Year)","Target End Date
+(i.e., Month Year)","Current Reporting Period
+(e.g., Q4 2025)","Percentage of Completion 
+(e.g., 75%)",Overall Status,Remarks/Actual Accomplishments
+,,,,,,,,,,,,,
+1,Siel Online Blended Learning - LMS,Elghene Maglaque,,,MISO x OVPAA,4 months,,Jul-7,Dec,Q4 2025,100%,Completed,Currently on its alpha testing
+2,EIS-CMS: RADIIS Analytics Module,Elghene Maglaque,,,MISO,1 Month,Update RADIIS models and analytical structure to reflect latest trends about research & development of CLSU,Aug,Aug,Q4 2025,100%,Completed,
+3,RADIIS - User Roles Update,Elghene Maglaque,,,MISO x VPRE,4 months,Update Focal Person from every College/Mother Unit to every offices/department,Jul,Dec,Q4 2025,85%,Delayed,"The delay was caused by the incomplete designation of Focal Persons, as several departments and offices have yet to assign their designated personnel."
+4,HRMIS - Employees & Plantilla module,Benjamin C. Sotto,,,MISO x HRMO,3 months,Develop features for: adding and updating of employee profile; and adding & updating of Plantilla item;,October,Dec,Q4 2025,1,Completed,Two targeted features developed & completed
+5,"CAIS - RIC Modules(evaluation, student monitoring)",Santi S. Ognita,,,MISO x OAD,6 months,"Develop module for OAD Record in Charge - evaluate student credentials, force drop subject, print cog, print registration form",January 2026,June 2026,Q4 2025,40,On Track,
+6,CAIS - Mobile,Santi S. Ognita,,,MISO x Oad,1 year,Develop a mobile application for student module in CAIS,Dec-25,Nov-30,Q4 2025,10%,On Track,
+7,CAIS - Student Adding & Changing Module,Santi S. Ognita,,,MISO x OAd,6 months,"Develop a hybrid process for student adding and changing process, removing the manual computation of assessment and error in encoding the actual addded and canceled subjects",Dec-25,Jun-26,Q4 2025,30%,On Track,
+8,ETEEAP WEBSITE,Santi S. Ognita,,,miso x OAD x eteeap,3 months,"Update process based on the changes in ETEAAP student application procedure, and Full implementation",Dec-25,Mar-26,Q4 2025,95%,On Track,
+9,CAIS - Student Application for Leave of Absence,Santi S. Ognita,,,MISO x OAD,5 months,Integrate the code in the active CAIS ,Feb-25,Jun-26,Q4 2025,20%,Delayed,
+10,CAIS - ONline payment API,Santi S. Ognita,,,MISO x OAD,1 year,Integrate the Landbank Payment API in Student Tuition Fee,Jun-25,Jun-26,Q4 2025,10%,Delayed,System Requirements Specification still in review of FMS (no merchant account to test)
+11,DRMS- ONline payment API,Santi S. Ognita,,,MISO x OAD,1 year,"Integrate the Landbank Payment API for the request of document in the office of admissionms (ex., diploma, tor)",Jun-25,Jun-26,Q4 2025,10%,Delayed,System Requirements Specification still in review of FMS (no merchant account to test)
+12,Oad Digitization,Santi S. Ognita,,,MISO x OAD,6 months,Deployment of the Digitization Website,Jun-25,Dec-25,Q4 2025,95%,Delayed,System Requirements not meet the hosting specification (conflict in node vesrsion that can install in the exisiting OS of the hosting)
+13,BASIS - Rice Module,Clark John R. Busuego,,,MISO x UBAP,10 months,Design and develop a digital record-keeping system with data visualization and strategic capabilities for the Rice module.,Apr-25,Feb-26,Q4 2025,100%,Completed,
+14,BASIS - Rice Module (Millings and Rice Distribution),Clark John R. Busuego,,,MISO x UBAP,3 months,"Develop a digitized record-keeping process for Millings and Rice Distributions (Student, Employees and Institutions).",Dec-25,Feb-26,Q4 2025,100%,Completed,
+15,BASIS - Lease/Contracts Module,Clark John R. Busuego,,,MISO x UBAP,3 months,"Design and develop a digital solution for lease and contract record-keeping for the Marketing Center, Community Market, UTS, and Ambulant Vendors.",May-25,Aug-25,Q4 2025,100%,Completed,
+16,BASIS - Administrator Module,Clark John R. Busuego,,,MISO x UBAP,2 months,"Enhance user management, role-based access control, permissions, announcements, activity tracking, and system maintenance.",Sep-25,Nov-25,Q4 2025,100%,Completed,
+17,CAIS - Faculty Scheduling Module,"Bolisay, Karlo Cris G.",,,MISO x OAD,6 months,Developed a module for use by college registrars and OAD employees for schedule purposes,Apr-25,Sep-25,Q4 2025,95%,On Track,
+As of Q1 2026,,,,,,,,,,,,,
+1,Siel Online Blended Learning - LMS - Moodle,Elghene Maglaque,,,MISO x OVPAA,4 months,Monitor and Integrate Features through APIs for class management,Jan,May,,,On Track,
+2,SiBOL - Laravel,Elghene Maglaque,,,MISO x OVPAA,6 months,Develop the final and improved version of LMS integrating the database schema of CAIS for faster and authentic data fetching and efficient management,Jan,June,,,On Track,
+3,EIS-CMS: RADIIS Analytics Module,Elghene Maglaque,,,MISO,,,,,,,Completed,
+4,RADIIS - User Roles Update,Elghene Maglaque,,,MISO x VPRE,,,,,,,Cancelled,Re-planned due to Institutional Structure changes
+5,Project Management System,Elghene Maglaque,Benjamin C. Sotto,,MISO,6 months,Develop an initial web-application for project management to be used by the MISO,Feb,July,,,On-hold,This will be handled by the students and will be further improve by the assigned MISO developer
+6,RADIIS - Monthly Project Monitoring Module,Elghene Maglaque,,,MISO x VPRIE,4 months,Create a module to broaden the monitoring of a project through identifying its monthly accomplishments,Jan,April,,100%,Completed,
+7,Community Concern Management and Decision Support System for CLSU,Elghene Maglaque,,,MISO x OSA,6 months,Create an initiative for stakeholder's concern management that will be used in a decision support  system in CLSU,Feb,July,,,Cancelled,This will be handled by the students and will be further improve by the assigned MISO developer
+8,HRMIS - PDS feature,Benjamin C. Sotto,,,MISO x HRMO,3 months,Integration of data with old system. Develop feature to print Personal Data Sheet (PDS) version 2025,January,March,Q1 2026,50%,On Track,
+9,HRMIS - Training Management Module,Benjamin C. Sotto,,,MISO x HRMO,3months,Develop a system to track attendance to trainings,April,June,Q1 2026,0%,On Track,
+10,Procurement Management System,Benjamin C. Sotto,"Khavee Agustus W. Botangen
+Louise Gwendolyn B. Hidalgo
+Priam Enterprises",,MISO x Procurement x BAC,,,,,,,On Track,"Project Inception Nov 28, 2025"
+11,Incident Reports Management System,Benjamin Sotto,"OJT (Hazel),
+KAWB,
+AGamilla",,MISO x OVPAD,3months,,,March,Q1 2026,95%,On Track,
+12,HR Online Job Application System,Benjamin Sotto,OJT,,MISO x HRMO,6months,,,,Q1 2026,80%,On Track,
+13,HRMIS - Service Request (exclusive for HRMDO),Benjamin Sotto,OJT,,MISO x HRMO,2months,,,,,100%,Completed,
+14,Designations Management System,Benjamin Sotto,OJT (OLSHCO),,MISO x OP,1month,,,,,,,
+15,Colleges' Websites & CMS,Benjamin Sotto,OJT (OLSHCO),,MISO x OVPAA,2months,,,,,,,
+16,Offices' Websites & CMS,Benjamin Sotto,OJT (OLSHCO),,MISO,2months,,,,,,,
+18,"CAIS - RIC Modules(evaluation, student monitoring)",Santi S. Ognita,,,MISO x OAD,6 months,"Develop module for OAD Record in Charge - evaluate student credentials, force drop subject, print cog, print registration form",January 2026,June 2026,Q1 2026,45%,On Track,
+19,CAIS - Mobile,Santi S. Ognita,,,MISO x Oad,1 year,Develop a mobile application for student module in CAIS,Dec-25,Nov-30,Q1 2026,45%,On Track,
+20,CAIS - Student Adding & Changing Module,Santi S. Ognita,,,MISO x OAd,6 months,"Develop a hybrid process for student adding and changing process, removing the manual computation of assessment and error in encoding the actual addded and canceled subjects",Dec-25,Jun-26,Q1 2026,40%,On Track,
+21,ETEEAP WEBSITE,Santi S. Ognita,,,miso x OAD x eteeap,3 months,"Update process based on the changes in ETEAAP student application procedure, and Full implementation",Dec-25,Mar-26,Q1 2026,97%,On Track,
+22,CAIS - Student Application for Leave of Absence,Santi S. Ognita,,,MISO x OAD,5 months,Integrate the code in the active CAIS ,Feb-25,Jun-26,Q1 2026,20%,Delayed,
+23,CAIS - ONline payment API,Santi S. Ognita,,,MISO x OAD x FMS x Cashier,1 year,Integrate the Landbank Payment API in Student Tuition Fee,Jun-25,Jun-26,Q1 2026,10%,Delayed,System Requirements Specification for signature
+24,DRMS- ONline payment API,Santi S. Ognita,,,MISO x OAD x FMS x Cashier,1 year,"Integrate the Landbank Payment API for the request of document in the office of admissionms (ex., diploma, tor)",Jun-25,Jun-26,Q1 2026,10%,Delayed,System Requirements Specification for signature
+25,Oad Digitization,Santi S. Ognita,,,MISO x OAD,6 months,Deployment of the Digitization Website,Jun-25,Dec-25,Q1 2026,95%,Delayed,System Requirements not meet the hosting specification (conflict in node vesrsion that can install in the exisiting OS of the hosting)
+26,Financial Management System (Budget Office),Santi S. Ognita,"Khavee Agustus W. Botangen
+Tech Pro 360 Solutions",,MISO x FMSO,1 year,Develop a web application for FMS-Buget Office,-,-,Q1 2026,0%,On-hold,"Outsourced, On-going data gathering by devs, Finalization of TOR"
+27,BASIS - Rice Module,Clark John R. Busuego,,,MISO x UBAP,10 months,Design and develop a digital record-keeping system with data visualization and strategic capabilities for the Rice module.,Apr-25,Feb-26,Q4 2025,100%,Completed,
+28,BASIS - Rice Module (Millings and Rice Distribution),Clark John R. Busuego,,,MISO x UBAP,3 months,"Develop a digitized record-keeping process for Millings and Rice Distributions (Student, Employees and Institutions).",Dec-25,Feb-26,Q4 2025,100%,Completed,
+29,BASIS - Lease/Contracts Module,Clark John R. Busuego,,,MISO x UBAP,3 months,"Design and develop a digital solution for lease and contract record-keeping for the Marketing Center, Community Market, UTS, and Ambulant Vendors.",May-25,Aug-25,Q4 2025,100%,Completed,
+30,BASIS - Administrator Module,Clark John R. Busuego,,,MISO x UBAP,2 months,"Enhance user management, role-based access control, permissions, announcements, activity tracking, and system maintenance.",Sep-25,Nov-25,Q4 2025,100%,Completed,
+31,CAIS - Faculty Scheduling Module,"Bolisay, Karlo Cris G.",,,MISO x OAd,,,,,,,,
+32,SRC Poultry Management System with Analytics (Development),Karlo Cris G. Bolisay,Capstone Advisees,N/A,MISO x SRC,1 year,Development,46054,46357,Q1 2026,0.05,On Track,
+33,Development of Dungon Interactive Display ,Khavee Agustus W. Botangen,Noel Manubay,N/A,MISO x Stratcom,6 months,Enhancement ,Jan 2026,June 2026,Q1 2026,80%,On Track,Initial result already deployed at Dungon Museum
+34,Development of Siel Evalytics (Faculty Evaluation Module),Khavee Agustus W. Botangen,"Mark Allen Cabading
+Skyler Adrien Cansino",N/A,MISO x TESO,6 months,,Jan 2026,June 2026,Q1 2026,50%,On Track,
+35,Development of Events Management and Facility Utilization Monitoring,Khavee Agustus W. Botangen,Capstone Advisee,N/A,MISO x Stratcom,1 year,,Jan 2026,December 2026,Q1 2026,5%,On Track,
+36,Enhancement and Deployment of Faculty Profile Management System,Khavee Agustus W. Botangen,Carl Crivell Canaveral,N/A,MISO x OVPAA,6 months,Enhancement & Deployment,Jan 2026,June 2026,Q1 2026,50%,On-hold,No available developer 
+37,Development of Health Information System,Khavee Agustus W. Botangen,Capstone Advisee,N/A,MISO x UHS,1 year,Development,Jan 2026,December 2026,Q1 2026,5%,On Track,
+38,Development of Inventory System,Khavee Agustus W. Botangen,"SSO, Capstone Advisee, CCCD, Benjamin C. Sotto",,MISO x PSD,1 year,Development,Jan 2026,December 2026,Q1 2026,5%,On Track,Assigned as capstone project
+39,University Services Request Management System,Ivan Dela Cruz,,,,,,,,,,,
+40,Thesis Formatting System,Ivan Dela Cruz,,N/A,MISO x IGS,6 months,Enhancement,Jan 2026,June 2026,Q1 2026,,,
+41,Document Tracking System,Tristan G. Peneyra,,N/A,MISO,6 months,,March 2026,September 2026,Q1 2026,,Delayed,
+42,ICT-Assets Inventory Management System (ICT-AIMS),Tristan G. Peneyra,"
+Gemlyn Inocencio",N/A,MISO X DIT,6 months,,January 2026,June 2026,Q1 2026,,On Track,
+43,LINK Alumni Engagement & Mentorship System (LAEMS),Genesis Benmark C.  Laguna,,N/A,MISO X ALUMNI,6 months,Enhancement & Development,Feb. 2026,August 2026,,,,integrates alumni entrepreneurs and former employees into the LINK Program 
+44,CLSU virtual tour,Genesis Benmark C.  Laguna,"Santi Ognita
+Karlo Bolisay
+Cristian Rey Seco",N/A,MISO X STRATCOM,1 year,Development,,,,,,Create 360 degree virtual in CLSU 
+45,University Emergency Response Management System,Cristian Rey C. Seco,"Louise Gwendolyn B. Hidalgo
+Inigo Gabriel Balmadrid
+Robert Austin Hernandez",,MISO,1 year,,January 2026,December 2026,Q1 2026,10%,On Track,
+46,Workflow and Approval Management System for CLSU,Cristian Rey C. Seco,"Louise Gwendolyn B. Hidalgo
+Inigo Gabriel Balmadrid
+Robert Austin Hernandez",,MISO,1 year,,January 2026,December 2026,Q1 2026,10%,On Track,
+47,CLSU Moto-Track: An IoT-Integrated Real-Time Fleet Monitoring and Geospatial Analytics System,Louise Gwendolyn B. Hidalgo,"Cristian Rey C. Seco
+Inigo Gabriel Balmadrid
+Robert Austin Hernandez",,MISO,1 year,,January 2026,December 2026,Q1 2026,10%,On Track,
+48,Scholarship Management System for CLSU,Louise Gwendolyn B. Hidalgo,"Cristian Rey C. Seco
+Inigo Gabriel Balmadrid
+Robert Austin Hernandez",,MISO,1 year,,January 2026,December 2026,Q1 2026,10%,On Track,
+49,Document Extraction and Analysis for Strategic Performance Management System of CLSU,Inigo Gabriel M. Balmadrid,"Louise Gwendolyn B. Hidalgo
+Cristian Rey C. Seco
+Robert Austin Hernandez",,MISO,1 year,,January 2026,December 2026,Q1 2026,10%,On Track,
+50,Development of the E-SPMS Template and Form Module for a Strategic Planning and Performance Management System (SPPMS) for CLSU,Inigo Gabriel M. Balmadrid,"Louise Gwendolyn B. Hidalgo
+Cristian Rey C. Seco
+Robert Austin Hernandez",,MISO,1 year,,January 2026,December 2026,Q1 2026,10%,On Track,

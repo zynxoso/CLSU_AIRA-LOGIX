@@ -7,9 +7,18 @@ import axios from 'axios';
 interface SnapToLogBannerProps {
     onExtracted: (data: any) => void;
     className?: string;
+    extractEndpoint?: string;
+    statusEndpointTemplate?: string;
+    extraFormFields?: Record<string, string>;
 }
 
-export default function SnapToLogBanner({ onExtracted, className }: SnapToLogBannerProps) {
+export default function SnapToLogBanner({
+    onExtracted,
+    className,
+    extractEndpoint = '/api/extract',
+    statusEndpointTemplate = '/api/extract/{jobId}/status',
+    extraFormFields,
+}: SnapToLogBannerProps) {
     const [isExtracting, setIsExtracting] = useState(false);
     const [status, setStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle');
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -24,15 +33,22 @@ export default function SnapToLogBanner({ onExtracted, className }: SnapToLogBan
         const formData = new FormData();
         formData.append('file', file);
 
+        if (extraFormFields) {
+            Object.entries(extraFormFields).forEach(([key, value]) => {
+                formData.append(key, value);
+            });
+        }
+
         try {
-            const response = await axios.post('/api/extract', formData);
+            const response = await axios.post(extractEndpoint, formData);
             
             if (response.data.success && response.data.job_id) {
                 const jobId = response.data.job_id;
                 
                 const pollInterval = setInterval(async () => {
                     try {
-                        const statusRes = await axios.get(`/api/extract/${jobId}/status`);
+                        const statusUrl = statusEndpointTemplate.replace('{jobId}', jobId);
+                        const statusRes = await axios.get(statusUrl);
                         const { status: jobStatus, data: jobData, error } = statusRes.data;
                         
                         if (jobStatus === 'completed' && jobData) {
